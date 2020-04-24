@@ -375,6 +375,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		22ED33792452B265005A039A /* NSURLSession - 网络通信模块 */ = {
+			isa = PBXGroup;
+			children = (
+				1F083A4920364648004D80C7 /* AFCompatibilityMacros.h */,
+				299522511BBF125A00859F49 /* AFURLSessionManager.h */,
+				299522521BBF125A00859F49 /* AFURLSessionManager.m */,
+				299522461BBF125A00859F49 /* AFHTTPSessionManager.h */,
+				299522471BBF125A00859F49 /* AFHTTPSessionManager.m */,
+			);
+			path = "NSURLSession - 网络通信模块";
+			sourceTree = "<group>";
+		};
+		22ED337A2452B281005A039A /* Serialization - 序列化模块 */ = {
+			isa = PBXGroup;
+			children = (
+				2995224D1BBF125A00859F49 /* AFURLRequestSerialization.h */,
+				2995224E1BBF125A00859F49 /* AFURLRequestSerialization.m */,
+				2995224F1BBF125A00859F49 /* AFURLResponseSerialization.h */,
+				299522501BBF125A00859F49 /* AFURLResponseSerialization.m */,
+			);
+			path = "Serialization - 序列化模块";
+			sourceTree = "<group>";
+		};
+		22ED337B2452B291005A039A /* Security - 安全模块 */ = {
+			isa = PBXGroup;
+			children = (
+				2995224B1BBF125A00859F49 /* AFSecurityPolicy.h */,
+				2995224C1BBF125A00859F49 /* AFSecurityPolicy.m */,
+			);
+			path = "Security - 安全模块";
+			sourceTree = "<group>";
+		};
+		22ED337C2452B2AC005A039A /* Reachability - 网络状态检测模块 */ = {
+			isa = PBXGroup;
+			children = (
+				299522491BBF125A00859F49 /* AFNetworkReachabilityManager.h */,
+				2995224A1BBF125A00859F49 /* AFNetworkReachabilityManager.m */,
+			);
+			path = "Reachability - 网络状态检测模块";
+			sourceTree = "<group>";
+		};
 		298D7C561BC2C88F00FD3B3E /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -479,7 +520,7 @@
 			isa = PBXGroup;
 			children = (
 				299522451BBF125A00859F49 /* AFNetworking */,
-				299522851BBF13C700859F49 /* UIKit+AFNetworking */,
+				299522851BBF13C700859F49 /* UIKit+AFNetworking - UIKit 扩展 */,
 				2995223B1BBF104D00859F49 /* Supporting Files */,
 				298D7C561BC2C88F00FD3B3E /* Tests */,
 				2995223A1BBF104D00859F49 /* Products */,
@@ -516,26 +557,18 @@
 		299522451BBF125A00859F49 /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
-				1F083A4920364648004D80C7 /* AFCompatibilityMacros.h */,
-				299522461BBF125A00859F49 /* AFHTTPSessionManager.h */,
-				299522471BBF125A00859F49 /* AFHTTPSessionManager.m */,
-				299522491BBF125A00859F49 /* AFNetworkReachabilityManager.h */,
-				2995224A1BBF125A00859F49 /* AFNetworkReachabilityManager.m */,
-				2995224B1BBF125A00859F49 /* AFSecurityPolicy.h */,
-				2995224C1BBF125A00859F49 /* AFSecurityPolicy.m */,
-				2995224D1BBF125A00859F49 /* AFURLRequestSerialization.h */,
-				2995224E1BBF125A00859F49 /* AFURLRequestSerialization.m */,
-				2995224F1BBF125A00859F49 /* AFURLResponseSerialization.h */,
-				299522501BBF125A00859F49 /* AFURLResponseSerialization.m */,
-				299522511BBF125A00859F49 /* AFURLSessionManager.h */,
-				299522521BBF125A00859F49 /* AFURLSessionManager.m */,
+				22ED33792452B265005A039A /* NSURLSession - 网络通信模块 */,
+				22ED337A2452B281005A039A /* Serialization - 序列化模块 */,
+				22ED337B2452B291005A039A /* Security - 安全模块 */,
+				22ED337C2452B2AC005A039A /* Reachability - 网络状态检测模块 */,
 			);
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
-		299522851BBF13C700859F49 /* UIKit+AFNetworking */ = {
+		299522851BBF13C700859F49 /* UIKit+AFNetworking - UIKit 扩展 */ = {
 			isa = PBXGroup;
 			children = (
+				299522951BBF13C700859F49 /* UIKit+AFNetworking.h */,
 				299522861BBF13C700859F49 /* AFAutoPurgingImageCache.h */,
 				299522871BBF13C700859F49 /* AFAutoPurgingImageCache.m */,
 				299522881BBF13C700859F49 /* AFImageDownloader.h */,
@@ -548,7 +581,6 @@
 				299522911BBF13C700859F49 /* UIButton+AFNetworking.m */,
 				299522931BBF13C700859F49 /* UIImageView+AFNetworking.h */,
 				299522941BBF13C700859F49 /* UIImageView+AFNetworking.m */,
-				299522951BBF13C700859F49 /* UIKit+AFNetworking.h */,
 				299522961BBF13C700859F49 /* UIProgressView+AFNetworking.h */,
 				299522971BBF13C700859F49 /* UIProgressView+AFNetworking.m */,
 				299522981BBF13C700859F49 /* UIRefreshControl+AFNetworking.h */,
@@ -556,7 +588,7 @@
 				323D83E0231D185400C5BFC6 /* WKWebView+AFNetworking.h */,
 				323D83E1231D185400C5BFC6 /* WKWebView+AFNetworking.m */,
 			);
-			path = "UIKit+AFNetworking";
+			path = "UIKit+AFNetworking - UIKit 扩展";
 			sourceTree = "<group>";
 		};
 		5F4323B21BF63741003B8749 /* Google.com */ = {
@@ -806,6 +838,7 @@
 					};
 					299522381BBF104D00859F49 = {
 						CreatedOnToolsVersion = 7.0.1;
+						DevelopmentTeam = A8F7U6DN75;
 						ProvisioningStyle = Automatic;
 					};
 					299522641BBF129200859F49 = {
@@ -1451,13 +1484,13 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = marker;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A8F7U6DN75;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1478,13 +1511,13 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = A8F7U6DN75;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

@@ -29,10 +29,21 @@
 
 /**
  `AFHTTPSessionManager` is a subclass of `AFURLSessionManager` with convenience methods for making HTTP requests. When a `baseURL` is provided, requests made with the `GET` / `POST` / et al. convenience methods can be made with relative paths.
+ 
+ 💡💡💡
+ AFHTTPSessionManager 是 AFURLSessionManager 的子类对象，它提供了进行 HTTP 请求的便捷方法。当设置好 baseURL （服务器地址）时，要发起 GET、POST 等请求时，你就可以使用本类中的便捷方法了，而这些便捷方法只需要传入相对路径参数即可。
+
+ 总之，AFHTTPSessionManager 提供了发起 GET、HEAD、POST、PUT、PATCH、DELETE 请求的便捷语法。它调用的是父类 AFURLSessionManager 创建的 NSURLSessionDataTask 类型的任务。
+
+ 这个类并没有实现像 NSURLSessionUploadTask、NSURLSessionDownloadTask、NSURLSessionStreamTask 类型的任务。
+ 也就是说，你不能通过这个类创建上传任务、下载任务或者 Stream 流式任务！
 
  ## Subclassing Notes
 
  Developers targeting iOS 7 or Mac OS X 10.9 or later that deal extensively with a web service are encouraged to subclass `AFHTTPSessionManager`, providing a class method that returns a shared singleton object on which authentication and other configuration can be shared across the application.
+ 
+ 💡💡💡
+ 鼓励以 iOS 7 或 Mac OS X 10.9 或更高版本为目标，并广泛处理 Web 服务的开发人员使用 AFHTTPSessionManager 子类，并提供一种类方法，该方法返回共享的单例对象，在该对象上可以在应用程序之间共享身份验证和其他配置。
 
  ## Methods to Override
 
@@ -41,10 +52,18 @@
  ## Serialization
 
  Requests created by an HTTP client will contain default headers and encode parameters according to the `requestSerializer` property, which is an object conforming to `<AFURLRequestSerialization>`.
+ 
+ 💡💡💡
+ 通过 HTTP 客户端创建的请求，将按照 requestSerializer 属性的设置包含默认的请求头和编码参数。
+ requestSerializer 属性的实例是一个遵守 AFURLRequestSerialization 协议的对象。
 
  Responses received from the server are automatically validated and serialized by the `responseSerializers` property, which is an object conforming to `<AFURLResponseSerialization>`
+ 
+ 💡💡💡
+ 从服务器接收到的响应数据将按照 responseSerializers 属性的设置自动验证并且序列化。
+ responseSerializers 属性的实例是一个遵守 AFURLResponseSerialization 协议的对象
 
- ## URL Construction Using Relative Paths
+ ## 使用相对路径构建 URL
 
  For HTTP convenience methods, the request serializer constructs URLs from the path relative to the `-baseURL`, using `NSURL +URLWithString:relativeToURL:`, when provided. If `baseURL` is `nil`, `path` needs to resolve to a valid `NSURL` object using `NSURL +URLWithString:`.
 
@@ -59,8 +78,10 @@
     [NSURL URLWithString:@"http://example2.com/" relativeToURL:baseURL]; // http://example2.com/
 
  Also important to note is that a trailing slash will be added to any `baseURL` without one. This would otherwise cause unexpected behavior when constructing URLs using paths without a leading slash.
+ 💡还注意的是，尾随斜杠将被添加到任何没有的 `baseURL` 中。 否则，使用不带斜杠的路径构造 URL 时，会导致意外的行为。
 
  @warning Managers for background sessions must be owned for the duration of their use. This can be accomplished by creating an application-wide or shared singleton instance.
+ 💡后台会话必须在使用期间被管理。 这可以通过创建应用程序范围或一个共享的单例类来实现。
  */
 
 NS_ASSUME_NONNULL_BEGIN
@@ -96,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) AFSecurityPolicy *securityPolicy;
 
 ///---------------------
-/// @name Initialization
+// MARK: 初始化方法
 ///---------------------
 
 /**
@@ -127,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
            sessionConfiguration:(nullable NSURLSessionConfiguration *)configuration NS_DESIGNATED_INITIALIZER;
 
 ///---------------------------
-/// @name Making HTTP Requests
+// MARK: 发起 HTTP 请求
 ///---------------------------
 
 /**
