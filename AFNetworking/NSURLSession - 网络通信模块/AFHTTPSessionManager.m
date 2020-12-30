@@ -47,6 +47,7 @@
 @implementation AFHTTPSessionManager
 @dynamic responseSerializer;
 
+// 通过链式调用「指定初始化方法」
 + (instancetype)manager {
     return [[[self class] alloc] initWithBaseURL:nil];
 }
@@ -63,14 +64,17 @@
     return [self initWithBaseURL:nil sessionConfiguration:configuration];
 }
 
+// 指定初始化方法
 - (instancetype)initWithBaseURL:(NSURL *)url
            sessionConfiguration:(NSURLSessionConfiguration *)configuration
 {
+    // 调用父类的 initWithSessionConfiguration 方法
     self = [super initWithSessionConfiguration:configuration];
     if (!self) {
         return nil;
     }
 
+    // 对传过来的 BaseUrl 进行处理，如果有值且最后不包含/，url加上"/"
     // Ensure terminal slash for baseURL path, so that NSURL +URLWithString:relativeToURL: works as expected
     if ([[url path] length] > 0 && ![[url absoluteString] hasSuffix:@"/"]) {
         url = [url URLByAppendingPathComponent:@""];
@@ -124,7 +128,7 @@
                       success:(nullable void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success
                       failure:(nullable void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure
 {
-    
+    // 生成一个 task
     NSURLSessionDataTask *dataTask = [self dataTaskWithHTTPMethod:@"GET"
                                                         URLString:URLString
                                                        parameters:parameters
@@ -133,7 +137,7 @@
                                                  downloadProgress:downloadProgress
                                                           success:success
                                                           failure:failure];
-    
+    // 开始网络请求
     [dataTask resume];
     
     return dataTask;
@@ -259,12 +263,16 @@
                                          failure:(nullable void (^)(NSURLSessionDataTask * _Nullable task, NSError *error))failure
 {
     NSError *serializationError = nil;
+    
+    // 1.通过 self.requestSerializer 和各种参数初始化网络请求所需的 NSMutableURLRequest 实例
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:method URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:&serializationError];
+    // AF4.x 新增，添加 HTTP 请求头
     for (NSString *headerField in headers.keyEnumerator) {
         [request setValue:headers[headerField] forHTTPHeaderField:headerField];
     }
     if (serializationError) {
         if (failure) {
+            //如果请求序列化错误，直接返回
             dispatch_async(self.completionQueue ?: dispatch_get_main_queue(), ^{
                 failure(nil, serializationError);
             });
@@ -273,6 +281,8 @@
         return nil;
     }
 
+    // 2.调用 dataTaskWithRequest:... 方法创建最终需要的 NSURLSessionDataTask 实例，
+    //   并在完成的回调中，调用我们传递过来的成功和失败的 Block 块
     __block NSURLSessionDataTask *dataTask = nil;
     dataTask = [self dataTaskWithRequest:request
                           uploadProgress:uploadProgress

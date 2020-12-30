@@ -491,21 +491,30 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
     self.sessionConfiguration = configuration;
 
     self.operationQueue = [[NSOperationQueue alloc] init];
+    //queue并发线程数设置为1
     self.operationQueue.maxConcurrentOperationCount = 1;
 
+    //各种响应转码
     self.responseSerializer = [AFJSONResponseSerializer serializer];
 
+    //设置默认安全策略
     self.securityPolicy = [AFSecurityPolicy defaultPolicy];
 
 #if !TARGET_OS_WATCH
     self.reachabilityManager = [AFNetworkReachabilityManager sharedManager];
 #endif
 
+    // 将 task 通过 url 映射，方便 delegate 中对 task 进行区分
+    // 设置存储NSURL task与AFURLSessionManagerTaskDelegate的词典（重点，在AFNet中，每一个task都会被匹配一个AFURLSessionManagerTaskDelegate 来做task的delegate事件处理）
+    //  AF 对 task 的代理进行了一个封装，并且转发代理到 AF 自定义的代理
     self.mutableTaskDelegatesKeyedByTaskIdentifier = [[NSMutableDictionary alloc] init];
 
+    //  设置AFURLSessionManagerTaskDelegate 词典的锁，确保词典在多线程访问时的线程安全
     self.lock = [[NSLock alloc] init];
     self.lock.name = AFURLSessionManagerLockName;
 
+    // 置空task关联的代理
+    // 为了防止后台回来，重新初始化这个 session，一些之前的后台请求任务，导致程序的 crash。
     [self.session getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
         for (NSURLSessionDataTask *task in dataTasks) {
             [self addDelegateForDataTask:task uploadProgress:nil downloadProgress:nil completionHandler:nil];
@@ -531,6 +540,7 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
 
 - (NSURLSession *)session {
     
+    // 调用原生类 NSURLSession 的 sessionWithConfiguration:delegate:delegateQueue: 方法
     @synchronized (self) {
         if (!_session) {
             _session = [NSURLSession sessionWithConfiguration:self.sessionConfiguration delegate:self delegateQueue:self.operationQueue];

@@ -171,13 +171,17 @@ NSArray * AFQueryStringPairsFromKeyAndValue(NSString *key, id value) {
 
 #pragma mark -
 
+// 返回一个数组，数组中的 item 项都是 NSURLRequest 的属性
 static NSArray * AFHTTPRequestSerializerObservedKeyPaths() {
     static NSArray *_AFHTTPRequestSerializerObservedKeyPaths = nil;
     static dispatch_once_t onceToken;
+    // 此处需要observer的keypath为allowsCellularAccess、cachePolicy、HTTPShouldHandleCookies
+    // HTTPShouldUsePipelining、networkServiceType、timeoutInterval
     dispatch_once(&onceToken, ^{
         _AFHTTPRequestSerializerObservedKeyPaths = @[NSStringFromSelector(@selector(allowsCellularAccess)), NSStringFromSelector(@selector(cachePolicy)), NSStringFromSelector(@selector(HTTPShouldHandleCookies)), NSStringFromSelector(@selector(HTTPShouldUsePipelining)), NSStringFromSelector(@selector(networkServiceType)), NSStringFromSelector(@selector(timeoutInterval))];
     });
 
+    //就是一个数组里装了很多方法的名字
     return _AFHTTPRequestSerializerObservedKeyPaths;
 }
 
@@ -241,6 +245,7 @@ static void *AFHTTPRequestSerializerObserverContext = &AFHTTPRequestSerializerOb
     // HTTP Method Definitions; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
     self.HTTPMethodsEncodingParametersInURI = [NSSet setWithObjects:@"GET", @"HEAD", @"DELETE", nil];
 
+    // 对当前类的和 NSUrlRequest 相关的那些属性添加了 KVO 监听
     self.mutableObservedChangedKeyPaths = [NSMutableSet set];
     for (NSString *keyPath in AFHTTPRequestSerializerObservedKeyPaths()) {
         if ([self respondsToSelector:NSSelectorFromString(keyPath)]) {
@@ -358,6 +363,7 @@ forHTTPHeaderField:(NSString *)field
                                 parameters:(id)parameters
                                      error:(NSError *__autoreleasing *)error
 {
+    // 断言，debug模式下，如果缺少该参数，crash
     NSParameterAssert(method);
     NSParameterAssert(URLString);
 
@@ -368,12 +374,15 @@ forHTTPHeaderField:(NSString *)field
     NSMutableURLRequest *mutableRequest = [[NSMutableURLRequest alloc] initWithURL:url];
     mutableRequest.HTTPMethod = method;
 
+    //将request的各种属性循环遍历
     for (NSString *keyPath in AFHTTPRequestSerializerObservedKeyPaths()) {
+        //如果自己观察到的发生变化的属性，在这些方法里
         if ([self.mutableObservedChangedKeyPaths containsObject:keyPath]) {
+            //把给自己设置的属性给request设置
             [mutableRequest setValue:[self valueForKeyPath:keyPath] forKey:keyPath];
         }
     }
-
+    //将传入的 parameters 参数进行编码，并添加到 request 中
     mutableRequest = [[self requestBySerializingRequest:mutableRequest withParameters:parameters error:error] mutableCopy];
 
 	return mutableRequest;
@@ -480,14 +489,17 @@ forHTTPHeaderField:(NSString *)field
 
     NSMutableURLRequest *mutableRequest = [request mutableCopy];
 
+    //从自己的head里去遍历，如果有值则设置给request的head
     [self.HTTPRequestHeaders enumerateKeysAndObjectsUsingBlock:^(id field, id value, BOOL * __unused stop) {
         if (![request valueForHTTPHeaderField:field]) {
             [mutableRequest setValue:value forHTTPHeaderField:field];
         }
     }];
 
+    // 把各种类型的参数，array dic set 转化成字符串，给 request
     NSString *query = nil;
     if (parameters) {
+        // 自定义的解析方式
         if (self.queryStringSerialization) {
             NSError *serializationError;
             query = self.queryStringSerialization(request, parameters, &serializationError);
@@ -500,6 +512,7 @@ forHTTPHeaderField:(NSString *)field
                 return nil;
             }
         } else {
+            // 默认的解析方式
             switch (self.queryStringSerializationStyle) {
                 case AFHTTPRequestQueryStringDefaultStyle:
                     query = AFQueryStringFromParameters(parameters);
@@ -507,6 +520,8 @@ forHTTPHeaderField:(NSString *)field
             }
         }
     }
+
+    //最后判断该request中是否包含了GET、HEAD、DELETE（都包含在HTTPMethodsEncodingParametersInURI）。因为这几个method的quey是拼接到url后面的。而POST、PUT是把query拼接到http body中的。
 
     if ([self.HTTPMethodsEncodingParametersInURI containsObject:[[request HTTPMethod] uppercaseString]]) {
         if (query && query.length > 0) {
@@ -541,6 +556,7 @@ forHTTPHeaderField:(NSString *)field
                         change:(NSDictionary *)change
                        context:(void *)context
 {
+    //当观察到这些set方法被调用了，而且不为Null就会添加到集合里，否则移除
     if (context == AFHTTPRequestSerializerObserverContext) {
         if ([change[NSKeyValueChangeNewKey] isEqual:[NSNull null]]) {
             [self.mutableObservedChangedKeyPaths removeObject:keyPath];
